@@ -1,23 +1,22 @@
 from urllib import response
 import streamlit as st
 import requests
-from requests.structures import CaseInsensitiveDict
 from decouple import config
 
 API_KEY = config('POLYGON_API_KEY')
-symbol = st.sidebar.text_input("Symbol", value="MSFT")
+symbol = st.sidebar.text_input("Symbol", value="MSFT").upper()
 
 screen = st.sidebar.selectbox("View", ('Overview', 'Fundamentals', 'News', 'Ownership', 'Technicals'))
 
-print(API_KEY)
-
 st.title(screen)
 if screen == 'Overview':
-  url = f"https://api.polygon.io/v3/reference/tickers/AAPL?apiKey={API_KEY}"
-  headers = CaseInsensitiveDict()
-  headers["Authorization"] = "Bearer YPijiFRXWt61xNTCyGZOftwxq02SgZUG"
-  r = requests.get(url, headers=headers)
+  url = f"https://api.polygon.io/v3/reference/tickers/{symbol}?apiKey={API_KEY}"
+  r = requests.get(url)
   response_json = r.json()
-  st.image(response_json['results']['branding']['logo_url'])
+
+  st.title(response_json['results']['ticker'])
+  st.image(f"https://companiesmarketcap.com/img/company-logos/64/{symbol}.webp")
+  st.write(response_json['results']['description'])
+
 if screen == 'Fundamentals':
   pass
