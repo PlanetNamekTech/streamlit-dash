@@ -1,5 +1,6 @@
 from urllib import response
 import streamlit as st
+import yfinance as yf
 from decouple import config
 from polygon import PolygonStock
 from helpers import format_number
@@ -7,8 +8,9 @@ from helpers import format_number
 API_KEY = config('POLYGON_API_KEY')
 symbol = st.sidebar.text_input("Symbol", value="MSFT").upper()
 stock = PolygonStock(API_KEY, symbol)
+yfsymbol = yf.Ticker(symbol)
 
-screen = st.sidebar.selectbox("View", ('Overview', 'Fundamentals', 'News', 'Ownership', 'Technicals'))
+screen = st.sidebar.selectbox("View", ('Overview', 'Fundamentals', 'Dividends', 'Ownership', 'Technicals'))
 
 st.subheader(screen)
 if screen == 'Overview':
@@ -24,6 +26,10 @@ if screen == 'Overview':
     st.write("Market Cap: ",format_number(company_info['results']['market_cap']))
     st.write("Headquartered in ", company_info['results']['address']['city'].capitalize(), ",", company_info['results']['address']['state'])
     st.write("Company Site: ", company_info['results']['homepage_url'])
+    
 
 if screen == 'Fundamentals':
   pass
+
+if screen == 'Dividends':
+  st.write(yfsymbol.dividends)
